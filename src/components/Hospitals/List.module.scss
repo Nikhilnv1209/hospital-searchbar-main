@@ -1,0 +1,190 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap");
+
+.listContainer {
+  font-family: "Open Sans", sans-serif;
+  max-height: 64vh !important;
+  width: 100%;
+  // border: 2px solid green;
+  color: white;
+  display: flex !important;
+  overflow-y: auto;
+  flex-direction: column;
+  align-items: center;
+  //   overflow-y: scroll;
+  // z-index: 1;
+
+  .listItem {
+    border: 1px solid green;
+    width: 95%;
+    margin-block: 0.3rem;
+    border-radius: 1rem;
+    display: flex;
+    gap: 0.3rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(164, 222, 164);
+    padding: 0.4rem 0rem;
+    // box-shadow: 0px 0px 0.2rem 0.1rem rgb(22, 90, 25);
+
+    .name {
+      color: purple;
+      // border: 1px solid white;
+      display: inline-block;
+      width: 60%;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      //   padding: 0.2rem 0rem;
+
+      &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+
+    .hospitaldetails {
+      font-size: 0.9rem;
+      // border: 1px solid white;
+      display: flex;
+      flex-direction: column;
+      width: 85%;
+      max-width: 100%;
+      gap: 0.2rem;
+
+      .addresscontainer {
+        // border: 1px solid white;
+        display: flex;
+        color: purple;
+        // justify-content: space-between;
+        font-weight: semi-bold;
+        // padding: 0.2rem 0.2rem;
+      }
+
+      .address {
+        // border: 1px solid red;
+        display: block;
+        width: 17%;
+      }
+
+      .fulladdress {
+        //   border: 1px solid red;
+        display: flex;
+        gap: 0.2em;
+        flex-wrap: wrap;
+        width: 83%;
+      }
+
+      .amanitycontainer {
+        // border: 1px solid white;
+        display: flex;
+        color: purple;
+        font-weight: semi-bold;
+        padding: 0.2rem 0rem;
+        width: 100%;
+        //   text-align: center;
+
+        .amanity {
+          // border: 1px solid red;
+          display: block;
+          width: 17%;
+        }
+
+        .avalue {
+          text-transform: uppercase;
+        }
+      }
+
+      .distancecontainer {
+        // border: 1px solid white;
+        color: purple;
+        display: flex;
+        font-weight: semi-bold;
+        padding: 0.2rem 0rem;
+        width: 100%;
+
+        .distance {
+          // border: 1px solid red;
+          display: block;
+          width: 17%;
+        }
+      }
+    }
+  }
+
+  &::-webkit-scrollbar {
+    width: 1rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgb(89, 168, 105);
+    border-radius: 10rem;
+    margin-block: 0.2rem;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgb(223, 237, 225);
+    border-radius: 10rem;
+    border: 3px solid rgb(89, 168, 105);
+  }
+}
+
+@media screen and (min-width: 200px) and (max-width: 600px) {
+  .listContainer {
+    // border: 1px solid red;
+    .listItem {
+      // border: 1px solid white;
+
+      .name {
+        // border: 1px solid white;
+        width: 80%;
+      }
+
+      .hospitaldetails {
+        // border: 1px solid black;
+        width: 85%;
+
+        .addresscontainer {
+          // border: 1px solid white;
+
+          .address {
+            // border: 1px solid white;
+            text-align: center;
+            width: 30%;
+          }
+
+          .fulladdress {
+            padding-left: 0.5rem;
+            // border: 1px solid white;
+          }
+        }
+
+        .amanitycontainer {
+          // border: 1px solid white;
+          .amanity {
+            // border: 1px solid white;
+            width: 27%;
+            text-align: center;
+          }
+          .avalue {
+            // border: 1px solid white;
+            padding-left: 0.4em;
+          }
+        }
+
+        .distancecontainer {
+          // border: 1px solid white;
+          .distance {
+            // border: 1px solid white;
+            width: 27%;
+            text-align: center;
+          }
+          .dvalue {
+            // border: 1px solid white;
+            padding-left: 0.4em;
+          }
+        }
+      }
+    }
+  }
+}
