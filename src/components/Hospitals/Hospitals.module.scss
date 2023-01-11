@@ -1,0 +1,60 @@
+.Maincontainer {
+  // border: 2px solid red;
+  // height: 65vh;
+  max-height: 65vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  place-items: center;
+  gap: .4rem;
+  .HospitalList {
+    height: 64vh;
+    max-height: 64vh;
+    width: 50vw;
+    z-index: 1;
+  }
+}
+
+.backButton {
+  width: 8rem;
+  height: 2rem;
+  grid-column: 1/-1;
+  outline: none;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 400;
+  background-color: rgba(121, 165, 237, 0.5);
+  color: white;
+  transition: all 0.2s ease-in-out;
+  z-index: 1;
+  order: 1;
+  &:hover {
+    background-color: rgba(121, 165, 237, 1);
+    cursor: pointer;
+  }
+}
+
+
+@media (min-width: 200px) and (max-width: 600px) {
+  .Maincontainer{
+    // border: 2px solid white;
+    // disable place item property
+    margin-top: 1.4rem;
+    place-items: unset;
+    justify-items: center;
+    grid-template-columns: 1fr;
+    max-height: 100%;
+    gap: 15px;
+    grid-template-rows: 1fr 1fr;
+    // scale: .8;
+    
+    .HospitalList{
+      order: 2;
+      width: 90%;
+    }
+  }
+
+  .backButton{
+    order: 3;
+  }
+}
