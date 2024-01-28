@@ -1,30 +1,26 @@
 import axios from "axios";
 import { createContext, useState } from "react";
 
-
 export const HospitalContext = createContext();
 
 export const HospitalProvider = ({ children }) => {
   const locationapikey = process.env.REACT_APP_LOCATION_API_KEY;
   const [Area, setArea] = useState("");
+  const [hospitals, setHospitals] = useState([]);
   const [params, setParams] = useState({
     lat: 0,
     lon: 0,
     place_id: "",
     radius: "",
-    name:"",
+    name: "",
   });
-
-  const [hospitals, setHospitals] = useState([]);
 
   const Fetch_location_hospitals = async () => {
     // console.log(params);
     const res = await axios.get(
       `https://api.geoapify.com/v2/places?categories=healthcare,healthcare.clinic_or_praxis,healthcare.dentist,healthcare.hospital,healthcare.pharmacy&filter=place:${params.place_id}&limit=20&apiKey=${locationapikey}`
     );
-
     setHospitals([...res.data.features]);
-    return res.data.features;
   };
 
   const Fetch_area_hospitals = async () => {
@@ -33,12 +29,7 @@ export const HospitalProvider = ({ children }) => {
     );
 
     setHospitals([...res.data.features]);
-    return res.data.features;
   };
-
-  // console.log(params);
-  // console.log(hospitals);
- 
 
   const data = {
     states: {
