@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.scss";
+import "./index.css";
 import App from "./App";
 import { HospitalProvider } from "./Context/HospitalContext";
-import { BrowserRouter ,Route, Routes} from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 // import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
