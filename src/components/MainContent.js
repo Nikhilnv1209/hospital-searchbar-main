@@ -1,108 +1,138 @@
-import React, { useRef, useContext, useEffect } from "react";
-import styles from "./MainContent.module.scss";
+import React, { useContext } from "react";
 import { HospitalContext } from "../Context/HospitalContext";
-// eslint-disable-next-line
-import { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
 import { useNavigate } from "react-router-dom";
-// eslint-disable-next-line
+import {
+  GeoapifyContext,
+  GeoapifyGeocoderAutocomplete,
+} from "@geoapify/react-geocoder-autocomplete";
+import "@geoapify/geocoder-autocomplete/styles/minimal.css";
+import Select from "react-select";
+import { toast } from "react-toastify";
+
 const autocompleteapikey = process.env.REACT_APP_AUTOCOMPLETE_API_KEY;
 
 const MainContent = () => {
-  // eslint-disable-next-line
-  // const [area, setarea] = useState();
-  const ref = useRef(null);
   const navigate = useNavigate();
-  // eslint-disable-next-line
-  const { area, params} = useContext(HospitalContext).data.states;
-  // eslint-disable-next-line
+  const { area, params } = useContext(HospitalContext).data.states;
   const { setarea, setparams } = useContext(HospitalContext).data.setstate;
-  // eslint-disable-next-line
   const { fetch_location_hospitals, fetch_area_hospitals } =
     useContext(HospitalContext).data.utility;
 
-  useEffect(() => {
-    // console.log(ref.current);
-    if (ref.current) {
-      const autocomplete = new GeocoderAutocomplete(
-        ref.current,
-        autocompleteapikey,
-        {
-          countryCodes: ["in"],
-          language: "en",
-          debounceDelay: 800,
-          placeholder: "Search for a place...",
-        }
-      );
-
-      autocomplete.on("select", async (location) => {
-        // check selected location
-        await setparams({...params,
-          lat: location.properties.lat,
-          lon: location.properties.lon,
-          place_id: location.properties.place_id,
-          name: location.properties.name,
-        });
+  const handleSearch = async () => {
+    if (!area) {
+      // error toast
+      toast.warn("Please select an option", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
       });
-      autocomplete.on("error", (error) => {
-        // handle error here
-        console.log(error);
-      });
+      return;
     }
-    // eslint-disable-next-line
-  }, [ref]);
+
+    const res = toast.promise(
+      area === "location" ? fetch_location_hospitals() : fetch_area_hospitals(),
+      {
+        pending: "Fetching data...",
+        success: "Data fetched successfully",
+        error: "Error fetching data",
+      }
+    );
+
+    if (res) {
+      navigate("/details/maps");
+    }
+  };
+
+  const onPlaceSelect = ({ properties }) => {
+    console.log(properties);
+    setparams({
+      ...params,
+      lat: properties.lat,
+      lon: properties.lon,
+      place_id: properties.place_id,
+      name: properties.formatted,
+    });
+  };
+
+  const selectStyles = {
+    control: (styles) => ({
+      ...styles,
+      backgroundColor: "#eeeeee",
+      borderRadius: "0.5rem",
+      borderColor: "#D1D5DB",
+      // adjust height and padding as needed
+      maxHeight: "1rem",
+      fontSize: ".8em",
+      minWidth: "12rem",
+    }),
+    option: (styles, { isFocused, isSelected }) => ({
+      ...styles,
+      backgroundColor: isFocused ? "#E2E8F0" : isSelected ? "#CBD5E0" : "white", // Tailwind colors
+      color: "black",
+      fontSize: ".8em",
+    }),
+  };
 
   return (
-    <div className={styles.mainContainer}>
-      {/* Title */}
-      <span className={styles.title}>Search For Hospitals Nearby You</span>
-
-      {/* Subtitle */}
-      <div className={styles.subtitle}>
-        {/* Select by location or area */}
-        <select
-          onChange={(e) => {
-            setarea(e.target.value);
-          }}
-        >
-          <option value="" selected hidden disabled>
-            Select Your Choice
-          </option>
-          <option value="location">Search by Location</option>
-          <option value="area">Search by Area</option>
-        </select>
-
-        {area === "area" ? (
-          <input
-            type="text"
-            placeholder="Area Radius(in meters)..."
-            value={params.radius}
-            onChange={(e) => {
-              setparams({ ...params, radius: e.target.value });
-            }}
-          />
-        ) : null}
+    <div className="flex-1 flex flex-col items-center justify-start pt-12 text-[#eeeeee]">
+      <div className="flex flex-col items-center justify-center space-y-3">
+        <h1 className="text-4xl md:text-6xl font-bold text-[#eeeeee]">
+          Healthcare Finder
+        </h1>
+        <span className="w-56 text-sm text-center md:text-xl md:w-auto">
+          Connecting You to the Right Care, Right Now
+        </span>
       </div>
 
-      <div className={styles.autocompletecontainer}>
-        <div className={styles.autocomplete} ref={ref}></div>
-        <div className={styles.searchButton}>
-          <button
-            onClick={async () => {
-              if (area === "location") {
-                const res = await fetch_location_hospitals();
-                navigate("/details/maps", {
-                  state: { params: params, hospital: res },
-                });
-              } else if (area === "area") {
-                const res = await fetch_area_hospitals();
-                navigate("/details/maps", {
-                  state: { params: params, hospital: res },
-                });
-              }
+      <div className="flex flex-col items-center justify-center gap-4 mt-12 mb-6 md:flex-row">
+        <span className="">Search For Hospitals Nearby You</span>
+
+        <div className="flex flex-col items-center gap-2 md:flex-row">
+          <Select
+            options={[
+              { value: "location", label: "Location" },
+              { value: "area", label: "Area" },
+            ]}
+            onChange={(e) => {
+              setarea(e.value);
             }}
-          >
-            Submit
-          </button>
+            styles={selectStyles}
+            placeholder="Select an option"
+          />
+          {area === "area" && (
+            <input
+              type="text"
+              placeholder="Area Radius (in meters)"
+              value={params.radius}
+              onChange={(e) => {
+                setparams({ ...params, radius: e.target.value });
+              }}
+              className="bg-[#393E46] h-10 w-48 outline-none border-none md:w-48 md:h-8 rounded-md text-white text-sm px-2 py-1 placeholder:text-[11px] placeholder:tracking-wider placeholder:text-[#eeeeee]"
+            />
+          )}
+        </div>
+      </div>
+
+      <div className="w-full md:max-w-lg">
+        <div className="flex flex-col gap-3 items-center justify-center">
+          <GeoapifyContext apiKey={autocompleteapikey}>
+            <GeoapifyGeocoderAutocomplete
+              placeholder="Enter address here"
+              type={"city"}
+              lang={"en"}
+              filterByCountryCode={["in"]}
+              limit={5}
+              value={params.name}
+              placeSelect={onPlaceSelect}
+            />
+          </GeoapifyContext>
+          <div className="bg-[#393E46] px-8 py-3 md:py-2 rounded-md text-[#eeeeee] md:text-base text-sm hover:bg-[#eeeeee] hover:text-[#393E46] cursor-pointer transition-all transition-duration-300">
+            <button onClick={handleSearch}>Submit</button>
+          </div>
         </div>
       </div>
     </div>
@@ -110,65 +140,3 @@ const MainContent = () => {
 };
 
 export default MainContent;
-
-// const [searchText, setSearchText] = useState("");
-//   const [optionsVisible, setOptionsVisible] = useState(false);
-//   const [selectedHospital, setSelectedHospital] = useState("");
-
-//   const searchedData = useMemo(() => {
-//     const tempArr = JSON.parse(JSON.stringify(HOSPITALS));
-//     if (searchText) {
-//       return tempArr.filter((item) =>
-//         item.name?.toLowerCase()?.includes(searchText)
-//       );
-//     } else {
-//       return [];
-//     }
-//   }, [searchText]);
-
-//   const onSearch = (e) => {
-//     setSearchText(e.target.value);
-//   };
-
-//   const toggleOptions = () => setOptionsVisible(!optionsVisible);
-
-//   const renderData = searchedData?.length > 0 ? searchedData : HOSPITALS;
-
-//   const onItemSelection = (i) => {
-//     setSearchText(i.name);
-//     setSelectedHospital(i);
-//     setOptionsVisible(false);
-//   };
-
-// placeholder="Search..."
-//         data-is-options-visible={optionsVisible}
-//         value={searchText}
-//         onChange={onSearch}
-//         onClick={toggleOptions}
-
-// {optionsVisible && (
-//   <div className={styles.optionsContainer}>
-//     {renderData?.map((i, index) => {
-//       return (
-//         <div
-//           key={index}
-//           className={styles.listItem}
-//           onClick={() => onItemSelection(i)}
-//         >
-//           <span>{i?.name}</span>
-//         </div>
-//       );
-//     })}
-//   </div>
-// )}
-
-// {selectedHospital && (
-//   <div className={styles.listItemCard}>
-//     <img src={selectedHospital.img} alt="img" />
-//     <div className={styles.details}>
-//       <span className={styles.name}>{selectedHospital.name}</span>
-//       <span>{selectedHospital.address}</span>
-//       <span>No of Beds : {selectedHospital.no_of_beds}</span>
-//     </div>
-//   </div>
-// )}
