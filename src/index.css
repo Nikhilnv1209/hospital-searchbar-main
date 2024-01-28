@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import '~leaflet/dist/leaflet.css';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.geocoder-container {
+  @apply md:w-full m-0;
+}
+
+.geocoder-container .geoapify-autocomplete-input {
+  @apply text-black m-0 rounded h-10 bg-[#eeeeee] w-full placeholder:text-black
+}
+
+.geocoder-container .geoapify-close-button {
+  @apply text-black rounded px-1 m-0;
+}
+
+.geocoder-container .geoapify-autocomplete-items {
+  @apply bg-[#eeeeee];
+}
+
+.geocoder-container .geoapify-autocomplete-items .geoapify-autocomplete-item {
+  @apply text-black text-sm flex gap-1 items-center;
+}
+
+.geocoder-container .geoapify-autocomplete-items .geoapify-autocomplete-item .icon {
+  @apply h-6 w-6;
+}
+
+.geocoder-container .geoapify-autocomplete-items .geoapify-autocomplete-item .address {
+  @apply !text-sm;
+}
+
+.geocoder-container .geoapify-autocomplete-items .geoapify-autocomplete-item .icon svg {
+  @apply h-full w-full;
+}
