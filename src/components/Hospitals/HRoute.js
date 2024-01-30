@@ -1,58 +1,26 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
-import styles from "./Maps.module.scss";
+import React, { useContext, useEffect, useRef } from "react";
 import L from "leaflet";
 import axios from "axios";
-// import { HospitalContext } from "../../Context/HospitalContext";
+import { HospitalContext } from "../../Context/HospitalContext";
 
 const mapkey = process.env.REACT_APP_MAP_ROUTE_API_KEY;
 const HRoute = () => {
-  const location = useLocation();
-  const params = location.state.params;
-  const route = location.state.route;
-  console.log("Hroute route",route);
-  console.log("Hroute params",params);
+  const { params, selectedHospital } = useContext(HospitalContext).data.states;
   let mapContainer = useRef(null);
-  const [loaded, setloaded] = useState(false);
   let map = useRef(null);
 
   const maproute = async () => {
     const res = await axios(
-      `https://api.geoapify.com/v1/routing?waypoints=${params.lat},${params.lon}|${route.properties.lat},${route.properties.lon}&mode=drive&apiKey=${mapkey}`
+      `https://api.geoapify.com/v1/routing?waypoints=${params.lat},${params.lon}|${selectedHospital.properties.lat},${selectedHospital.properties.lon}&mode=drive&apiKey=${mapkey}`
     );
     return res;
   };
 
   useEffect(() => {
-    if (loaded === false) {
-      map.current = L.map(mapContainer).setView(
-        [route.properties.lat, route.properties.lon],
-        15
-      );
-      // console.log(loaded);
-      setloaded(true);
-    } else if (loaded) {
-      // console.log(loaded);
-      map.current.remove();
-      map.current = L.map(mapContainer).setView(
-        [route.properties.lat, route.properties.lon],
-        15
-      );
-      // console.log(map.remove());
-    }
-    // use map.revome() to remove the map
-
-    // let isRetina = L.Browser.retina;
-    // let baseUrl = `https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=${mapkey}`;
-    // let retinaUrl = `https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}@2x.png?apiKey=${mapkey}`;
-
-    // L.tileLayer(isRetina ? retinaUrl : baseUrl, {
-    //   //   attribution:
-    //   //     'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
-    //   apiKey: mapkey,
-    //   maxZoom: 20,
-    //   id: "osm-bright",
-    // }).addTo(map.current);
+    map.current = L.map(mapContainer).setView(
+      [selectedHospital.properties.lat, selectedHospital.properties.lon],
+      15
+    );
 
     const openstreet = L.tileLayer(
       "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -105,16 +73,8 @@ const HRoute = () => {
       .bindPopup(`<b>${params.name}</b>`);
 
     // Hospital marker
-    // L.marker([route.geometry.coordinates[1], route.geometry.coordinates[0]], {
-    //   icon: markerIcon,
-    // })
-    //   .addTo(map.current)
-    //   .bindPopup(`<b>${route.properties.name}</b>`)
-    //   .openPopup();
-
-    // Hospital marker
     // eslint-disable-next-line
-    const hospitalmarker = L.geoJSON(route, {
+    const hospitalmarker = L.geoJSON(selectedHospital, {
       pointToLayer: function (feature, latlng) {
         return L.marker(latlng, { icon: markerIcon }).bindPopup(
           `<b>${feature.properties.name}</b>`
@@ -122,9 +82,8 @@ const HRoute = () => {
       },
     }).addTo(map.current);
 
-    // Home to Hospital route with waypoints and distance and steps and meters
+    // Home to Hospital selectedHospital with waypoints and distance and steps and meters
     maproute().then((res) => {
-      console.log("route form api Hroute",res.data.features[0]);
       L.geoJSON(res.data.features[0], {
         style: function () {
           return {
@@ -133,22 +92,22 @@ const HRoute = () => {
             opacity: 0.85,
             lineJoin: "round",
             lineCap: "round",
-            dashArray: "6, 4"
+            dashArray: "6, 4",
           };
         },
-        onEachFeature: function (feature, layer) {
-
-        },
+        onEachFeature: function (feature, layer) {},
       }).addTo(map.current);
     });
 
-    // map.remove();
+    return () => {
+      map.current.remove();
+    };
     // eslint-disable-next-line
-  }, [mapContainer, route]);
+  }, [mapContainer, selectedHospital]);
 
   return (
     <div
-      className={styles.mapcontainer}
+      className={"z-0 w-[100vw]"}
       ref={(e) => {
         e = mapContainer = e;
       }}

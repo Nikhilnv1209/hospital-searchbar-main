@@ -1,42 +1,14 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
-import styles from "./Maps.module.scss";
+import React, { useEffect, useRef, useContext } from "react";
 import L from "leaflet";
-// import { HospitalContext } from "../../Context/HospitalContext";
-// const mapkey = process.env.REACT_APP_MAP_API_KEY;
+import { HospitalContext } from "../../Context/HospitalContext";
 
 const Maps = () => {
-  const [loaded, setloaded] = useState(false);
-  const location = useLocation();
-  const params = location.state.params;
-  const hospital = location.state.hospital;
-  console.log("hospitals maps",hospital);
-  console.log("params maps",params);
+  const { params, hospitals } = useContext(HospitalContext).data.states;
   let mapContainer = useRef(null);
   let map = useRef(null);
 
   useEffect(() => {
-    if (loaded === false) {
-      map.current = L.map(mapContainer).setView([params.lat, params.lon], 15);
-      console.log(loaded);
-      setloaded(true);
-    } else if (loaded) {
-      console.log(loaded);
-      map.current.remove();
-      map.current = L.map(mapContainer).setView([params.lat, params.lon], 15);
-      // console.log(map.remove());
-    }
-    // let isRetina = L.Browser.retina;
-    // let baseUrl = `https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=${mapkey}`;
-    // let retinaUrl = `https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}@2x.png?apiKey=${mapkey}`;
-
-    // L.tileLayer(isRetina ? retinaUrl : baseUrl, {
-    //   //   attribution:
-    //   //     'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
-    //   apiKey: mapkey,
-    //   maxZoom: 20,
-    //   id: "osm-bright",
-    // }).addTo(map.current);
+    map.current = L.map(mapContainer).setView([params.lat, params.lon], 15);
 
     const openstreet = L.tileLayer(
       "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -85,7 +57,7 @@ const Maps = () => {
 
     // geojson
     // eslint-disable-next-line
-    const Hospitals = L.geoJSON(hospital, {
+    const Hospitals = L.geoJSON(hospitals, {
       pointToLayer: function (feature, latlng) {
         return L.marker(latlng, { icon: markerIcon });
       },
@@ -94,30 +66,20 @@ const Maps = () => {
       },
     }).addTo(map.current);
 
-    // for (let i = 0; i < hospital.length; i++) {
-    //   L.marker(
-    //     [
-    //       hospital[i].geometry.coordinates[1],
-    //       hospital[i].geometry.coordinates[0],
-    //     ],
-    //     {
-    //       icon: markerIcon,
-    //     }
-    //   )
-    //     .addTo(map.current)
-    //     .bindPopup(`<h3>${hospital[i].properties.name}</h3>`);
-    // }
-
     L.marker([params.lat, params.lon], { icon: centermarkerIcon })
       .addTo(map.current)
       .bindPopup(`<h3>${params.name}</h3>`);
 
-    // eslint-disable-next-line
+      
+      return () => {
+        map.current.remove();
+      };
+  // eslint-disable-next-line
   }, [mapContainer]);
 
   return (
     <div
-      className={styles.mapcontainer}
+      className={"z-0 w-[100vw]"}
       ref={(e) => {
         e = mapContainer = e;
       }}
