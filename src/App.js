@@ -14,15 +14,14 @@ const App = () => {
   return (
     <>
       <ToastContainer />
-      <div className="min-h-screen flex flex-col gap-8 justify-between relative bg-[#222831]">
+      <main className="min-h-screen flex flex-col gap-2 justify-between relative bg-[#222831]">
         <Header />
 
         <Routes>
           <Route path="/" element={<MainContent />}></Route>
         </Routes>
 
-        <div className="max-h-[65vh] grid grid-cols-2 place-items-center gap-1">
-          <Routes>
+        <Routes>
             <Route path="/details" key={location.key} element={<Hospitals />}>
               <Route
                 path="/details/maps"
@@ -35,11 +34,10 @@ const App = () => {
                 element={<HRoute />}
               />
             </Route>
-          </Routes>
-        </div>
+        </Routes>
 
         <Footer />
-      </div>
+      </main>
     </>
   );
 };

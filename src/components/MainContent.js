@@ -78,7 +78,7 @@ const MainContent = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-start pt-12 text-[#eeeeee]">
+    <div className="flex-1 flex flex-col items-center md:justify-start mt-24 md:mt-12 text-[#eeeeee]">
       <div className="flex flex-col items-center justify-center space-y-3">
         <h1 className="text-4xl md:text-6xl font-bold text-[#eeeeee]">
           Healthcare Finder
