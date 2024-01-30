@@ -1,71 +1,71 @@
-import React from "react";
-import styles from "./List.module.scss";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { HospitalContext } from "../../Context/HospitalContext";
 
 const List = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  console.log(location);
-  console.log("hospitals list",location.state.hospital);
-  console.log("params list",location.state.params);
-  // console.log(location.state.hospital);
-  const list = location.state.hospital;
+  const { hospitals } =
+    useContext(HospitalContext).data.states;
+
+  const { setselectedhospital } = useContext(HospitalContext).data.setstate;
+
+  const handleSelect = (items) => {
+    setselectedhospital(items);
+    navigate("/details/route");
+  };
 
   return (
-    <div className={styles.listContainer}>
-      {list.map((items, index) => {
-        return (
-          <div className={styles.listItem} key={index}>
+    <div className="absolute top-[1%] left-1 z-10 max-h-[98%] w-[25%] flex flex-col items-center overflow-y-auto bg-[#eeeeee] text-[#393E46] opacity-95">
+      {hospitals &&
+        hospitals.map((items, index) => (
+          <div
+            className="flex flex-col items-center justify-center bg-[#eeeeee] border-b border-[#222831] px-2 hover:bg-[#393E46]/10 cursor-pointer transition duration-300 ease-in- group"
+            key={index}
+          >
             <span
-              className={styles.name}
-              onClick={() => {
-                navigate("/details/route", {
-                  state: {
-                    route: items,
-                    params: location.state.params,
-                    hospital: list,
-                  },
-                });
-              }}
+              className="text-left font-semibold text-base block w-full cursor-pointer hover:underline group-hover:underline mb-1"
+              onClick={() => handleSelect(items)}
             >
               {items.properties.datasource.raw.name}
             </span>
-            <span className={styles.hospitaldetails}>
-              <span className={styles.addresscontainer}>
-                <span className={styles.address}>Address : </span>
-                <span className={styles.fulladdress}>
-                  <span className={styles.address_name}>
-                    {items.properties.datasource.raw["addr:full"]},
-                  </span>
-                  <span className={styles.address_district}>
+
+            <div className="text-[0.8rem] flex flex-col gap-1">
+              <div className="flex font-normal">
+                <span className="block text-center">
+                  Address :
+                </span>
+                <span className="flex flex-1 gap-1 flex-wrap pl-2">
+                  <span>{items.properties.datasource.raw["addr:full"]},</span>
+                  <span>
                     {items.properties.datasource.raw["addr:district"]},
                   </span>
-                  <span className={styles.address_state}>
-                    {items.properties.datasource.raw["addr:state"]},
-                  </span>
-                  <span className={styles.address_code}>
+                  <span>{items.properties.datasource.raw["addr:state"]},</span>
+                  <span>
                     {items.properties.datasource.raw["addr:postcode"]}
                   </span>
                 </span>
-              </span>
+              </div>
 
-              <span className={styles.amanitycontainer}>
-                <span className={styles.amanity}>Amenity: </span>
-                <span className={styles.avalue}>
+
+
+              <div className="flex font-normal">
+                <span className="block text-center">
+                  Amenity:
+                </span>
+                <span className="flex-1 uppercase pl-2">
                   {items.properties.datasource.raw.amenity}
                 </span>
-              </span>
+              </div>
 
-              <span className={styles.distancecontainer}>
-                <span className={styles.distance}>Distance: </span>
-                <span className={styles.dvalue}>
-                  {items.properties.distance} Meters
+              <div className="flex font-normal">
+                <span className="block text-center">
+                  Distance:
                 </span>
-              </span>
-            </span>
+                <span className="pl-2">{items.properties.distance} Meters</span>
+              </div>
+            </div>
           </div>
-        );
-      })}
+        ))}
     </div>
   );
 };
