@@ -7,6 +7,7 @@ export const HospitalProvider = ({ children }) => {
   const locationapikey = process.env.REACT_APP_LOCATION_API_KEY;
   const [Area, setArea] = useState("");
   const [hospitals, setHospitals] = useState([]);
+  const [selectedHospital, setSelectedHospital] = useState({});
   const [params, setParams] = useState({
     lat: 0,
     lon: 0,
@@ -36,10 +37,13 @@ export const HospitalProvider = ({ children }) => {
       area: Area,
       params: params,
       hospitals: hospitals,
+      selectedHospital: selectedHospital,
     },
     setstate: {
       setarea: setArea,
       setparams: setParams,
+      sethospitals: setHospitals,
+      setselectedhospital: setSelectedHospital,
     },
     utility: {
       fetch_location_hospitals: Fetch_location_hospitals,
