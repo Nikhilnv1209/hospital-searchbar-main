@@ -53,3 +53,20 @@ body {
 .geocoder-container .geoapify-autocomplete-items .geoapify-autocomplete-item .icon svg {
   @apply h-full w-full;
 }
+
+/* scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
