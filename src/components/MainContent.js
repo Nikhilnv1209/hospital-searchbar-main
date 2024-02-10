@@ -42,9 +42,8 @@ const MainContent = () => {
       }
     );
 
-    if (res) {
-      navigate("/details/maps");
-    }
+      res.then(() => navigate("/details/maps"));
+    
   };
 
   const onPlaceSelect = ({ properties }) => {
@@ -118,7 +117,7 @@ const MainContent = () => {
       </div>
 
       <div className="w-full md:max-w-lg">
-        <div className="flex flex-col gap-3 items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-3">
           <GeoapifyContext apiKey={autocompleteapikey}>
             <GeoapifyGeocoderAutocomplete
               placeholder="Enter address here"
